@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:applegoambiental/components/components.dart';
+import 'package:applegoambiental/screens/screens.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,12 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kebab Campeón Transportes',
+      title: 'Transportes Kebab Campeón',
+      color: Colors.white,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF17566e)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Kebab Campeón Transportes'),
+      home: const MyHomePage(title: 'Transportes Kebab Campeón'),
     );
   }
 }
@@ -33,113 +33,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Lista de rutas de imágenes
-  final List<String> imagePaths = [
-    'assets/images/01.png',
-    'assets/images/09.png',
-    'assets/images/01.png',
-    'assets/images/04.png',
-    'assets/images/01.png',
-    'assets/images/00.png',
-    'assets/images/08.png',
-    'assets/images/01.png',
-    'assets/images/08.png',
-    'assets/images/01.png',
-    'assets/images/01.png',
-    'assets/images/10.png',
-    'assets/images/00.png',
-    'assets/images/02.png',
-    'assets/images/00.png',
-    'assets/images/00.png',
-    'assets/images/08.png',
-    'assets/images/05.png',
-    'assets/images/08.png',
-    'assets/images/01.png',
-    'assets/images/04.png',
-    'assets/images/07.png',
-    'assets/images/11.png',
-    'assets/images/06.png',
-    'assets/images/00.png',
-    'assets/images/02.png',
-    'assets/images/00.png',
-    'assets/images/03.png',
-    'assets/images/09.png',
-    'assets/images/05.png',
-    'assets/images/03.png',
-    'assets/images/01.png',
-    'assets/images/00.png',
-    'assets/images/02.png',
-    'assets/images/02.png',
-
-
-    // Agrega más rutas de imágenes aquí
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.title,
-            style: Theme.of(context).textTheme.headline6,
+    return DefaultTabController(
+      length: 2, // The number of tabs
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              widget.title,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.local_shipping_outlined, color: Colors.white,)), // Icon for the first tab
+                Tab(icon: Icon(Icons.remove_red_eye_outlined, color: Colors.white)), // Icon for the second tab
+              ],
+            ),
           ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(10.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5,
-                  childAspectRatio: 1.0,
-                  mainAxisSpacing: 0.0,
-                  crossAxisSpacing: 0.0,
-                ),
-                itemCount: imagePaths.length, // Usa la longitud de la lista de imágenes
-                itemBuilder: (context, index) => InkWell(
-                  onTap: () {
-                    int row = (index / 5).floor() + 1; // Calcula la fila
-                    int col = index % 5 + 1; // Calcula la columna
-                    if (imagePaths[index] == 'assets/images/00.png') {
-                      mostrarMensaje("Piso: ${row}x${col} pulsado");
-                    } else {
-                      mostrarMensaje("Pulsa un edificio");
-                    }
-                  },
-                  child: Image.asset(
-                    imagePaths[index],
-                    fit: BoxFit.cover, // Esto hará que la imagen llene todo el espacio disponible
-                  ), // Usa la lista de imágenes
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Button3d(
-                onPressed: () {
-                  mostrarMensaje("Botón presionado");
-                },
-                child: Text(
-                  'Botón',
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: Button3dStyle.BLUE,
-                width: 200.0,
-                height: 50.0,
-              ),
-            ),
-          ],
+          body: TabBarView(
+            children: [
+              OrderScreen(), // The first tab
+              ViewMapScreen(), // The second tab, replace with your second screen
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-void mostrarMensaje(String mensaje) {
-  Fluttertoast.showToast(
-    msg: mensaje,
-    toastLength: Toast.LENGTH_LONG,
-  );
 }

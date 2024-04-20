@@ -32,6 +32,8 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.2.1
   cupertino_icons: ^1.0.2
+  mqtt_client: ^10.2.1
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
