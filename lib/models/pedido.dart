@@ -3,13 +3,17 @@ enum EstadoPedido { EN_ESPERA, EN_CURSO, COMPLETADO }
 class Punto {
   int x;
   int y;
+  String idMapa;
 
-  Punto(this.x, this.y);
+  Punto(this.x, this.y, this.idMapa);
+
+  String get getidMapa => this.idMapa;
 
   @override
   String toString() {
     return '(${this.x}, ${this.y})';
   }
+
 }
 
 class Pedido {

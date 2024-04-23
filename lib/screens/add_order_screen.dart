@@ -15,6 +15,7 @@ class AddOrder extends StatefulWidget {
 class _AddOrderState extends State<AddOrder> {
 
   bool recogidaSeleccionada = true;
+  bool borradoRecogida = false;
 
   final List<String> imagePaths = [
     '01', '09', '01', '04', '01',
@@ -28,6 +29,8 @@ class _AddOrderState extends State<AddOrder> {
 
   Punto? puntoRecogida;
   Punto? puntoEntrega;
+
+  String? ultimoPuntoBorrado;
 
   @override
   Widget build(BuildContext context) {
@@ -49,19 +52,32 @@ class _AddOrderState extends State<AddOrder> {
                 ),
                 itemCount: imagePaths.length,
                 itemBuilder: (context, index) => InkWell(
-                  onTap: () {
-                    int row = (index / 5).floor() + 1;
-                    int col = index % 5 + 1;
+                    onTap: () {
+                        if (imagePaths[index] == '00') {
+                          mostrarMensaje('No se puede seleccionar este punto');
+                          return;
+                        }
 
-                    setState(() {
-                      if (recogidaSeleccionada) {
-                        puntoRecogida = Punto(row, col);
-                      } else {
-                        puntoEntrega = Punto(row, col);
-                      }
-                      recogidaSeleccionada = !recogidaSeleccionada;
-                    });
-                  },
+                        int row = (index / 5).floor() + 1;
+                        int col = index % 5 + 1;
+
+                        setState(() {
+                          if (ultimoPuntoBorrado == 'recogida') {
+                            puntoRecogida = Punto(row, col, imagePaths[index]);
+                            ultimoPuntoBorrado = null;
+                          } else if (ultimoPuntoBorrado == 'entrega') {
+                            puntoEntrega = Punto(row, col, imagePaths[index]);
+                            ultimoPuntoBorrado = null;
+                          } else {
+                            if (recogidaSeleccionada) {
+                              puntoRecogida = Punto(row, col, imagePaths[index]);
+                            } else {
+                              puntoEntrega = Punto(row, col, imagePaths[index]);
+                            }
+                            recogidaSeleccionada = !recogidaSeleccionada;
+                          }
+                        });
+                      },
                   child: Container(
                     decoration: BoxDecoration(
                       border: puntoRecogida != null && puntoRecogida!.x == (index / 5).floor() + 1 && puntoRecogida!.y == index % 5 + 1
@@ -78,14 +94,41 @@ class _AddOrderState extends State<AddOrder> {
                 ),
               ),
             ),
-            Text(
-              '🟡Punto de recogida: ${puntoRecogida?.toString() ?? 'No seleccionado'}',
-              style: TextStyle(fontSize: 16),
+            Card(
+              child: ListTile(
+                title: Text(
+                  '🟡 Punto de recogida: ${puntoRecogida?.toString() ?? 'No seleccionado'}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      puntoRecogida = null;
+                      ultimoPuntoBorrado = 'recogida';
+                    });
+                  },
+                ),
+              ),
             ),
-            Text(
-              '🟠Punto de entrega: ${puntoEntrega?.toString() ?? 'No seleccionado'}',
-              style: TextStyle(fontSize: 16),
+            Card(
+              child: ListTile(
+                title: Text(
+                  '🟠 Punto de entrega: ${puntoEntrega?.toString() ?? 'No seleccionado'}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      puntoEntrega = null;
+                      ultimoPuntoBorrado = 'entrega';
+                    });
+                  },
+                ),
+              ),
             ),
+
             SizedBox(height: 20.0,),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -106,7 +149,7 @@ class _AddOrderState extends State<AddOrder> {
                     borderRadius: BorderRadius.circular(10)
                 ),
                 onPressed: () {
-                  if (puntoRecogida != null && puntoEntrega != null){
+                  if (validarPuntos()){
                     var uuid = Uuid();
                     String shortId = uuid.v4().substring(0, 8);
 
@@ -118,7 +161,7 @@ class _AddOrderState extends State<AddOrder> {
                     widget.addPedido(nuevoPedido);
                     Navigator.pop(context);
                   }else{
-                    mostrarMensaje('Selecciona los puntos primero');
+                    mostrarMensaje('Seleccion de puntos incorrecta');
                   }
                 },
               ),
@@ -128,4 +171,12 @@ class _AddOrderState extends State<AddOrder> {
       ),
     );
   }
+
+  bool validarPuntos() {
+    if (puntoRecogida != null && puntoEntrega != null) {
+      return true;
+    }
+    return false;
+  }
 }
+
