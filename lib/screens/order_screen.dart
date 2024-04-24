@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:applegoambiental/models/models.dart';
 import 'package:applegoambiental/screens/add_order_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,26 +7,40 @@ import 'package:flutter/material.dart';
 import 'package:applegoambiental/components/components.dart';
 
 class OrderScreen extends StatefulWidget {
-  const OrderScreen({super.key});
+  MqttManager mqttManager;
+
+  OrderScreen({required this.mqttManager});
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  late StreamSubscription<String> _messageSubscription;
+
   List<Pedido> pedidosEnEspera = [];
   List<Pedido> pedidosEnCurso = [];
   List<Pedido> pedidosFinalizados = [];
 
+  List<String> imagePaths = LocalStorage().getMapList();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    // Actualiza el mapa cada vez que recibe uno nuevo
+    _messageSubscription = widget.mqttManager.messageStream.listen((newLocation) {
+      setState(() {
+        imagePaths = convertStringToList(newLocation);
+      });
+    });
   }
 
   void addPedido(Pedido pedido) {
     setState(() {
       pedidosEnEspera.add(pedido);
+      LocalStorage().setMapList(imagePaths);
+      mostrarMensaje("Nuevo mapa");
     });
   }
 
@@ -67,7 +83,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       Navigator.push(
                         context,
                         PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => AddOrder(addPedido: addPedido),
+                          pageBuilder: (context, animation, secondaryAnimation) => AddOrder(addPedido: addPedido,imagePaths: imagePaths,),
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             var begin = Offset(0,-1);
                             var end = Offset.zero;

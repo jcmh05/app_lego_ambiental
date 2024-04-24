@@ -1,27 +1,37 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:applegoambiental/components/components.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 
 class ViewMapScreen extends StatefulWidget {
-  const ViewMapScreen({super.key});
+  MqttManager mqttManager;
+
+  ViewMapScreen({required this.mqttManager});
 
   @override
   State<ViewMapScreen> createState() => _ViewMapScreenState();
 }
 
 class _ViewMapScreenState extends State<ViewMapScreen> {
+  late StreamSubscription<String> _messageSubscription;
 
   // Mapa principal
-  final List<String> imagePaths = [
-    '01', '09', '01', '04', '01',
-    '00', '08', '01', '08', '01',
-    '01', '10', '00', '02', '00',
-    '00', '08', '05', '08', '01',
-    '04', '07', '11', '06', '00',
-    '02', '00', '03', '09', '05',
-    '03', '01', '00', '02', '02',
-  ];
+   List<String> imagePaths = LocalStorage().getMapList();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _messageSubscription = widget.mqttManager.messageStream.listen((newLocation) {
+      setState(() {
+        imagePaths = convertStringToList(newLocation);
+        LocalStorage().setMapList(imagePaths);
+        mostrarMensaje("Nuevo mapa");
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

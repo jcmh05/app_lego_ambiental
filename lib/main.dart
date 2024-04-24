@@ -1,7 +1,12 @@
+import 'package:applegoambiental/components/components.dart';
 import 'package:flutter/material.dart';
 import 'package:applegoambiental/screens/screens.dart';
 
-void main() {
+import 'components/mqttmanager.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorage().init();
   runApp(const MyApp());
 }
 
@@ -33,6 +38,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late MqttManager manager;
+
+  void mqttConnect() async {
+    manager = MqttManager(server: LocalStorage().getIpAddress(), port: LocalStorage().getPort(), topic: LocalStorage().getMapTopic());
+    await manager.connect();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    mqttConnect();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -55,11 +73,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 Tab(icon: Icon(Icons.remove_red_eye_outlined, color: Colors.white)), // Icon for the second tab
               ],
             ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // Navega a la pantalla de ajustes
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
+                  );
+                },
+              ),
+            ],
           ),
           body: TabBarView(
             children: [
-              OrderScreen(), // The first tab
-              ViewMapScreen(), // The second tab, replace with your second screen
+              OrderScreen(mqttManager: manager,), // The first tab
+              ViewMapScreen(mqttManager: manager,), // The second tab, replace with your second screen
             ],
           ),
         ),

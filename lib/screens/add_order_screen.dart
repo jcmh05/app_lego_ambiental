@@ -5,27 +5,23 @@ import 'package:uuid/uuid.dart';
 
 class AddOrder extends StatefulWidget {
   final Function addPedido;
+  List<String> imagePaths;
 
-  const AddOrder({super.key, required this.addPedido});
+  AddOrder({required this.addPedido, required this.imagePaths});
 
   @override
-  State<AddOrder> createState() => _AddOrderState();
+  State<AddOrder> createState() => _AddOrderState(imagePaths: imagePaths);
 }
 
 class _AddOrderState extends State<AddOrder> {
+  List<String> imagePaths;
+
+  _AddOrderState({required this.imagePaths});
 
   bool recogidaSeleccionada = true;
   bool borradoRecogida = false;
 
-  final List<String> imagePaths = [
-    '01', '09', '01', '04', '01',
-    '00', '08', '01', '08', '01',
-    '01', '10', '00', '02', '00',
-    '00', '08', '05', '08', '01',
-    '04', '07', '11', '06', '00',
-    '02', '00', '03', '09', '05',
-    '03', '01', '00', '02', '02',
-  ];
+
 
   Punto? puntoRecogida;
   Punto? puntoEntrega;
