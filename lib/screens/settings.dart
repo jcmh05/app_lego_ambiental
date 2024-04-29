@@ -13,6 +13,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _ipAddressController = TextEditingController(text: LocalStorage().getIpAddress());
   final _portController = TextEditingController(text: LocalStorage().getPort().toString());
   final _mapTopicController = TextEditingController(text: LocalStorage().getMapTopic());
+  final _orderTopicController = TextEditingController(text: LocalStorage().getOrderTopic());
+  final _odometryTopicController = TextEditingController(text: LocalStorage().getOdometryTopic());
+  final _completeOrderTopicController = TextEditingController(text: LocalStorage().getCompleteOrderTopic());
 
   bool _hasChanged = false;
 
@@ -57,7 +60,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               TextFormField(
                 controller: _mapTopicController,
-                decoration: InputDecoration(labelText: 'Tema del mapa'),
+                decoration: InputDecoration(labelText: 'Topic para el mapa'),
+                onChanged: (value) {
+                  setState(() {
+                    _hasChanged = true;
+                  });
+                },
+              ),
+              TextFormField(
+                controller: _orderTopicController,
+                decoration: InputDecoration(labelText: 'Topic para los pedidos'),
+                onChanged: (value) {
+                  setState(() {
+                    _hasChanged = true;
+                  });
+                },
+              ),
+              TextFormField(
+                controller: _odometryTopicController,
+                decoration: InputDecoration(labelText: 'Topic para la odometría'),
+                onChanged: (value) {
+                  setState(() {
+                    _hasChanged = true;
+                  });
+                },
+              ),
+              TextFormField(
+                controller: _completeOrderTopicController,
+                decoration: InputDecoration(labelText: 'Topic para la orden completa'),
                 onChanged: (value) {
                   setState(() {
                     _hasChanged = true;
@@ -70,6 +100,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     LocalStorage().setIpAddress(_ipAddressController.text);
                     LocalStorage().setPort(int.parse(_portController.text));
                     LocalStorage().setMapTopic(_mapTopicController.text);
+                    LocalStorage().setOrderTopic(_orderTopicController.text);
+                    LocalStorage().setOdometryTopic(_odometryTopicController.text);
+                    LocalStorage().setCompleteOrderTopic(_completeOrderTopicController.text);
                     setState(() {
                       _hasChanged = false;
                     });

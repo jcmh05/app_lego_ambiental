@@ -7,21 +7,19 @@ import 'package:flutter/material.dart';
 class MqttManager {
   final Log = logger(MqttManager);
 
-  final String server;
-  final int port;
-  final String topic;
+
   late MqttServerClient client;
 
   final StreamController<String> _messageController = StreamController<String>.broadcast();
 
   Stream<String> get messageStream => _messageController.stream;
 
-  MqttManager({required this.server, required this.port, required this.topic}) {
+  MqttManager() {
     _setupMqttClient();
   }
 
   void _setupMqttClient() {
-    client = MqttServerClient.withPort(server, 'flutter_client', port);
+    client = MqttServerClient.withPort(LocalStorage().getIpAddress(), 'flutter_client', LocalStorage().getPort());
     client.logging(on: false);
     client.keepAlivePeriod = 20;
     client.onDisconnected = _onDisconnected;
@@ -52,7 +50,7 @@ class MqttManager {
 
   void _onConnected() {
     Log.i('Connected');
-    client.subscribe(topic, MqttQos.atMostOnce);
+    client.subscribe(LocalStorage().getMapTopic(), MqttQos.atMostOnce);
   }
 
   void _onDisconnected() {
@@ -65,12 +63,20 @@ class MqttManager {
     Log.i('Subscribed to topic: $topic');
 
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      Log.i("Message received: ${c[0].topic} ");
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
       final String newLocation = MqttPublishPayload.bytesToStringAsString(recMess.payload.message!);
 
       _messageController.add(newLocation);
       Log.i('Received message: $newLocation from topic: ${c[0].topic}>');
     });
+  }
+
+  void publishMessage(String topic, String message) {
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+    builder.addString(message);
+
+    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!);
   }
 
   void dispose() {

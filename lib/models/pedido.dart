@@ -1,3 +1,5 @@
+
+
 enum EstadoPedido { EN_ESPERA, EN_CURSO, COMPLETADO }
 
 class Punto {
@@ -52,4 +54,39 @@ class Pedido {
   String toString() {
     return 'Pedido: $id\nRecogida: $coordenadasRecogida\nEntrega: $coordenadasEntrega';
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'coordenadasRecogida': {
+        'x': coordenadasRecogida.x,
+        'y': coordenadasRecogida.y,
+        'idMapa': coordenadasRecogida.idMapa,
+      },
+      'coordenadasEntrega': {
+        'x': coordenadasEntrega.x,
+        'y': coordenadasEntrega.y,
+        'idMapa': coordenadasEntrega.idMapa,
+      },
+      'estado': estado.index,
+    };
+  }
+
+  static Pedido fromJson(Map<String, dynamic> json) {
+    return Pedido(
+      id: json['id'],
+      coordenadasRecogida: Punto(
+        json['coordenadasRecogida']['x'],
+        json['coordenadasRecogida']['y'],
+        json['coordenadasRecogida']['idMapa'],
+      ),
+      coordenadasEntrega: Punto(
+        json['coordenadasEntrega']['x'],
+        json['coordenadasEntrega']['y'],
+        json['coordenadasEntrega']['idMapa'],
+      ),
+      estado: EstadoPedido.values[json['estado']],
+    );
+  }
+
 }

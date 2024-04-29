@@ -18,10 +18,6 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   late StreamSubscription<String> _messageSubscription;
 
-  List<Pedido> pedidosEnEspera = [];
-  List<Pedido> pedidosEnCurso = [];
-  List<Pedido> pedidosFinalizados = [];
-
   List<String> imagePaths = LocalStorage().getMapList();
 
   @override
@@ -32,16 +28,18 @@ class _OrderScreenState extends State<OrderScreen> {
     _messageSubscription = widget.mqttManager.messageStream.listen((newLocation) {
       setState(() {
         imagePaths = convertStringToList(newLocation);
+        LocalStorage().setMapList(imagePaths);
       });
     });
   }
 
   void addPedido(Pedido pedido) {
     setState(() {
-      pedidosEnEspera.add(pedido);
-      LocalStorage().setMapList(imagePaths);
-      mostrarMensaje("Nuevo mapa");
+      LocalStorage().addPedidoEnEspera(pedido);
     });
+
+    //String message = '${pedido.coordenadasRecogida.x}${pedido.coordenadasRecogida.y}${pedido.coordenadasEntrega.x}${pedido.coordenadasEntrega.y}';
+    //widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
   }
 
   @override
@@ -55,11 +53,11 @@ class _OrderScreenState extends State<OrderScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _buildSection('Pedidos en espera:', pedidosEnEspera),
+                _buildSection('Pedidos en espera:', LocalStorage().getPedidosEnEspera()),
                 Divider( thickness: 1.0,),
-                _buildSection('Pedidos en curso:', pedidosEnCurso),
+                _buildSection('Pedidos en curso:', LocalStorage().getPedidosEnCurso()),
                 Divider( thickness: 1.0,),
-                _buildSection('Pedidos finalizados:', pedidosFinalizados),
+                _buildSection('Pedidos finalizados:', LocalStorage().getPedidosFinalizados()),
                 Divider( thickness: 1.0,),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -130,10 +128,17 @@ class _OrderScreenState extends State<OrderScreen> {
                     title: Text(pedidos[index].toString()),
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           pedidos.removeAt(index);
                         });
+                        if (title == 'Pedidos en espera:') {
+                          await LocalStorage().removePedidoEnEspera(index);
+                        } else if (title == 'Pedidos en curso:') {
+                          await LocalStorage().removePedidoEnCurso(index);
+                        } else if (title == 'Pedidos finalizados:') {
+                          await LocalStorage().removePedidoFinalizado(index);
+                        }
                       },
                     ),
                   ),

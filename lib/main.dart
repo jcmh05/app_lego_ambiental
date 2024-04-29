@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late MqttManager manager;
 
   void mqttConnect() async {
-    manager = MqttManager(server: LocalStorage().getIpAddress(), port: LocalStorage().getPort(), topic: LocalStorage().getMapTopic());
+    manager = MqttManager();
     await manager.connect();
   }
 
@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2, // The number of tabs
+      length: 3, // The number of tabs
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
@@ -69,8 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             bottom: TabBar(
               tabs: [
-                Tab(icon: Icon(Icons.local_shipping_outlined, color: Colors.white,)), // Icon for the first tab
-                Tab(icon: Icon(Icons.remove_red_eye_outlined, color: Colors.white)), // Icon for the second tab
+                Tab(icon: Icon(Icons.local_shipping_outlined, color: Colors.white,)),
+                Tab(icon: Icon(Icons.map_outlined, color: Colors.white)),
+                Tab(icon: Icon(Icons.remove_red_eye_outlined, color: Colors.white)),
               ],
             ),
             actions: <Widget>[
@@ -91,8 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           body: TabBarView(
             children: [
-              OrderScreen(mqttManager: manager,), // The first tab
-              ViewMapScreen(mqttManager: manager,), // The second tab, replace with your second screen
+              OrderScreen(mqttManager: manager,),
+              ViewMapScreen(mqttManager: manager,),
+              ViewMqttScreen(mqttManager: manager,),
             ],
           ),
         ),
