@@ -7,6 +7,12 @@ import 'components/mqttmanager.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorage().init();
+
+  // Limpia las 3 listas de pedidos
+  LocalStorage().clearPedidosEnEspera();
+  LocalStorage().clearPedidosEnCurso();
+  LocalStorage().clearPedidosFinalizados();
+
   runApp(const MyApp());
 }
 

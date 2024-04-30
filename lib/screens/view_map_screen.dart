@@ -16,6 +16,7 @@ class ViewMapScreen extends StatefulWidget {
 
 class _ViewMapScreenState extends State<ViewMapScreen> {
   late StreamSubscription<String> _messageSubscription;
+  int robotIndex = (int.parse(LocalStorage().getOdometry()[0]) - 1) * 5 + int.parse(LocalStorage().getOdometry()[1]) - 1;
 
   // Mapa principal
    List<String> imagePaths = LocalStorage().getMapList();
@@ -25,11 +26,25 @@ class _ViewMapScreenState extends State<ViewMapScreen> {
     super.initState();
 
     _messageSubscription = widget.mqttManager.messageStream.listen((newLocation) {
-      setState(() {
-        imagePaths = convertStringToList(newLocation);
-        LocalStorage().setMapList(imagePaths);
-        mostrarMensaje("Nuevo mapa");
-      });
+      var splitMessage = newLocation.split(':');
+      var topic = splitMessage[0];
+      var message = splitMessage[1];
+
+      if (topic == LocalStorage().getMapTopic()) {
+        setState(() {
+          imagePaths = convertStringToList(message);
+          LocalStorage().setMapList(imagePaths);
+          mostrarMensaje("Nuevo mapa");
+        });
+      } else if (topic == LocalStorage().getOdometryTopic()) {
+        LocalStorage().setOdometry(message);
+        setState(() {
+          var odometry = LocalStorage().getOdometry();
+          var row = int.parse(odometry[0]);
+          var col = int.parse(odometry[1]);
+          robotIndex = (row - 1) * 5 + col - 1; // Calcula el índice basado en la odometría
+        });
+      }
     });
   }
 
@@ -64,13 +79,55 @@ class _ViewMapScreenState extends State<ViewMapScreen> {
 
                 mostrarMensaje("Pulsado: ${row}x${col}");
               },
-              child: Image.asset(
-                "assets/images/" + imagePaths[index] + ".png",
-                fit: BoxFit.cover,
+              child: Stack(
+                children: <Widget>[
+                  Image.asset(
+                    "assets/images" + LocalStorage().getSkin() + "/" + imagePaths[index] + ".png",
+                    fit: BoxFit.cover,
+                  ),
+                  if (index == robotIndex)
+                    Center(
+                      child: Transform.scale(
+                        scale: 0.7,
+                        child: Image.asset(
+                          "assets/robot.png",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Button3d(
+            onPressed: () {
+              String currentSkin = LocalStorage().getSkin();
+              String newSkin;
+
+              if (currentSkin == '1') {
+                newSkin = '2';
+              } else if (currentSkin == '2') {
+                newSkin = '3';
+              } else {
+                newSkin = '1';
+              }
+
+              LocalStorage().setSkin(newSkin);
+              setState(() {
+              });
+            },
+            child: Text(
+              'Cambiar skin',
+              style: TextStyle(color: Colors.white),
+            ),
+            style: Button3dStyle.BLUE,
+            width: 200.0,
+            height: 50.0,
+          ),
+        )
       ],
     );
   }

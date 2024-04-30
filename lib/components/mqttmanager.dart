@@ -28,6 +28,7 @@ class MqttManager {
   }
 
   Future<void> connect() async {
+    mostrarMensaje('Conetando...');
     try {
       await client.connect();
     } catch (e) {
@@ -37,6 +38,7 @@ class MqttManager {
 
     if (client.connectionStatus!.state == MqttConnectionState.connected) {
       Log.i('Connected to MQTT broker');
+      mostrarMensaje('Conexión con éxito a ${LocalStorage().getIpAddress()}');
     } else {
       Log.e('Connection failed: ${client.connectionStatus}');
       disconnect();
@@ -51,24 +53,25 @@ class MqttManager {
   void _onConnected() {
     Log.i('Connected');
     client.subscribe(LocalStorage().getMapTopic(), MqttQos.atMostOnce);
+    client.subscribe(LocalStorage().getOdometryTopic(), MqttQos.atMostOnce); // Suscripción al nuevo topic
   }
 
   void _onDisconnected() {
     Log.i('Disconnected');
   }
 
-
-
   void _onSubscribed(String topic) {
     Log.i('Subscribed to topic: $topic');
 
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-      Log.i("Message received: ${c[0].topic} ");
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
-      final String newLocation = MqttPublishPayload.bytesToStringAsString(recMess.payload.message!);
+      final String newMessage = MqttPublishPayload.bytesToStringAsString(recMess.payload.message!);
 
-      _messageController.add(newLocation);
-      Log.i('Received message: $newLocation from topic: ${c[0].topic}>');
+      // Añade el nombre del topic al inicio del mensaje
+      final String topicMessage = '${c[0].topic}:$newMessage';
+
+      _messageController.add(topicMessage);
+      Log.i('Received message: $topicMessage');
     });
   }
 

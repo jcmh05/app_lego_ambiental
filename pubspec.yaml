@@ -62,20 +62,49 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/00.png
-    - assets/images/01.png
-    - assets/images/02.png
-    - assets/images/03.png
-    - assets/images/04.png
-    - assets/images/05.png
-    - assets/images/06.png
-    - assets/images/07.png
-    - assets/images/08.png
-    - assets/images/09.png
-    - assets/images/09.png
-    - assets/images/09.png
-    - assets/images/10.png
-    - assets/images/11.png
+    - assets/robot.png
+    - assets/images1/00.png
+    - assets/images1/01.png
+    - assets/images1/02.png
+    - assets/images1/03.png
+    - assets/images1/04.png
+    - assets/images1/05.png
+    - assets/images1/06.png
+    - assets/images1/07.png
+    - assets/images1/08.png
+    - assets/images1/09.png
+    - assets/images1/09.png
+    - assets/images1/09.png
+    - assets/images1/10.png
+    - assets/images1/11.png
+    - assets/images2/00.png
+    - assets/images2/01.png
+    - assets/images2/02.png
+    - assets/images2/03.png
+    - assets/images2/04.png
+    - assets/images2/05.png
+    - assets/images2/06.png
+    - assets/images2/07.png
+    - assets/images2/08.png
+    - assets/images2/09.png
+    - assets/images2/09.png
+    - assets/images2/09.png
+    - assets/images2/10.png
+    - assets/images2/11.png
+    - assets/images3/00.png
+    - assets/images3/01.png
+    - assets/images3/02.png
+    - assets/images3/03.png
+    - assets/images3/04.png
+    - assets/images3/05.png
+    - assets/images3/06.png
+    - assets/images3/07.png
+    - assets/images3/08.png
+    - assets/images3/09.png
+    - assets/images3/09.png
+    - assets/images3/09.png
+    - assets/images3/10.png
+    - assets/images3/11.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

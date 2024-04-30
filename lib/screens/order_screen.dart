@@ -26,10 +26,18 @@ class _OrderScreenState extends State<OrderScreen> {
 
     // Actualiza el mapa cada vez que recibe uno nuevo
     _messageSubscription = widget.mqttManager.messageStream.listen((newLocation) {
-      setState(() {
-        imagePaths = convertStringToList(newLocation);
-        LocalStorage().setMapList(imagePaths);
-      });
+      var splitMessage = newLocation.split(':');
+      var topic = splitMessage[0];
+      var message = splitMessage[1];
+
+      if (topic == LocalStorage().getMapTopic()) {
+        setState(() {
+          imagePaths = convertStringToList(message);
+          LocalStorage().setMapList(imagePaths);
+        });
+      } else if (topic == LocalStorage().getOdometryTopic()) {
+        LocalStorage().setOdometry(message);
+      }
     });
   }
 
@@ -38,8 +46,8 @@ class _OrderScreenState extends State<OrderScreen> {
       LocalStorage().addPedidoEnEspera(pedido);
     });
 
-    //String message = '${pedido.coordenadasRecogida.x}${pedido.coordenadasRecogida.y}${pedido.coordenadasEntrega.x}${pedido.coordenadasEntrega.y}';
-    //widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
+    String message = '${pedido.coordenadasRecogida.x}${pedido.coordenadasRecogida.y}${pedido.coordenadasEntrega.x}${pedido.coordenadasEntrega.y}';
+    widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
   }
 
   @override

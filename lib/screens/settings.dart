@@ -41,16 +41,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               TextFormField(
                 controller: _ipAddressController,
-                decoration: InputDecoration(labelText: 'Dirección IP'),
+                decoration: InputDecoration(
+                  labelText: 'Dirección IP',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 1.0,
+                    ),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _hasChanged = true;
                   });
                 },
               ),
+              SizedBox(height: 20.0),
               TextFormField(
                 controller: _portController,
-                decoration: InputDecoration(labelText: 'Puerto'),
+                decoration: InputDecoration(
+                  labelText: 'Puerto',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 1.0,
+                    ),
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -58,42 +75,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   });
                 },
               ),
+              SizedBox(height: 20.0),
               TextFormField(
                 controller: _mapTopicController,
-                decoration: InputDecoration(labelText: 'Topic para el mapa'),
+                decoration: InputDecoration(
+                  labelText: 'Topic para el mapa',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 1.0,
+                    ),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _hasChanged = true;
                   });
                 },
               ),
+              SizedBox(height: 20.0),
               TextFormField(
                 controller: _orderTopicController,
-                decoration: InputDecoration(labelText: 'Topic para los pedidos'),
+                decoration: InputDecoration(
+                  labelText: 'Topic para los pedidos',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 1.0,
+                    ),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _hasChanged = true;
                   });
                 },
               ),
+              SizedBox(height: 20.0),
               TextFormField(
                 controller: _odometryTopicController,
-                decoration: InputDecoration(labelText: 'Topic para la odometría'),
+                decoration: InputDecoration(
+                  labelText: 'Topic para la odometría',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 1.0,
+                    ),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _hasChanged = true;
                   });
                 },
               ),
+              SizedBox(height: 20.0),
               TextFormField(
                 controller: _completeOrderTopicController,
-                decoration: InputDecoration(labelText: 'Topic para la orden completa'),
+                decoration: InputDecoration(
+                  labelText: 'Topic para la orden completa',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 1.0,
+                    ),
+                  ),
+                ),
                 onChanged: (value) {
                   setState(() {
                     _hasChanged = true;
                   });
                 },
               ),
+              SizedBox(height: 20.0),
               if (_hasChanged)
                 ElevatedButton(
                   onPressed: () {

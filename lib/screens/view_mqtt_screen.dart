@@ -4,18 +4,23 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:applegoambiental/components/mqttmanager.dart';
 
 class ViewMqttScreen extends StatefulWidget {
-  final MqttManager mqttManager;
+  MqttManager mqttManager;
 
   ViewMqttScreen({required this.mqttManager});
 
   @override
-  _ViewMqttScreenState createState() => _ViewMqttScreenState();
+  _ViewMqttScreenState createState() => _ViewMqttScreenState(mqttManager: mqttManager);
 }
 
 class _ViewMqttScreenState extends State<ViewMqttScreen> {
+  MqttManager mqttManager;
+
+  _ViewMqttScreenState({required this.mqttManager});
+
   void reconnect() async {
     widget.mqttManager.disconnect();
-    await widget.mqttManager.connect();
+    mqttManager = MqttManager();
+    await mqttManager.connect();
   }
 
   @override
@@ -28,11 +33,14 @@ class _ViewMqttScreenState extends State<ViewMqttScreen> {
               : 'No conectado',
         ),
         actions: <Widget>[
-          Icon(
-            Icons.circle,
-            color: widget.mqttManager.client.connectionStatus!.state == MqttConnectionState.connected
-                ? Colors.green
-                : Colors.red,
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: Icon(
+              Icons.circle,
+              color: widget.mqttManager.client.connectionStatus!.state == MqttConnectionState.connected
+                  ? Colors.green
+                  : Colors.red,
+            ),
           ),
         ],
       ),

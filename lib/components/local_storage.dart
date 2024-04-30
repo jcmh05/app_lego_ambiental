@@ -72,6 +72,26 @@ class LocalStorage{
     return mapListString.split(',');
   }
 
+  /////////////// SKIN ///////////////
+  Future<void> setSkin(String skin) async {
+    await _mqttBox.put('skin', skin);
+    Log.i('Skin actualizado: $skin');
+  }
+
+  String getSkin() {
+    return _mqttBox.get('skin', defaultValue: '1');
+  }
+
+  /////////////// Odometría ///////////////
+  Future<void> setOdometry(String odometry) async {
+    await _mqttBox.put('odometry', odometry);
+    Log.i('Odometría actualizada: $odometry');
+  }
+
+  String getOdometry() {
+    return _mqttBox.get('odometry', defaultValue: '75');
+  }
+
   /////////////// Topic para recibir mapas ///////////////
   Future<void> setMapTopic(String mapTopic) async {
     await _mqttBox.put('mapTopic', mapTopic);

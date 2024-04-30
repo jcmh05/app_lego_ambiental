@@ -82,9 +82,18 @@ class _AddOrderState extends State<AddOrder> {
                           ? Border.all(color: Colors.orange, width: 3.0)
                           : null,
                     ),
-                    child: Image.asset(
-                      "assets/images/" + imagePaths[index] + ".png",
-                      fit: BoxFit.cover,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images" +  LocalStorage().getSkin() + "/" + imagePaths[index] + ".png",
+                          fit: BoxFit.cover,
+                        ),
+                        if (puntoRecogida != null && puntoRecogida!.x == (index / 5).floor() + 1 && puntoRecogida!.y == index % 5 + 1)
+                          Text('A', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.yellow)),
+                        if (puntoEntrega != null && puntoEntrega!.x == (index / 5).floor() + 1 && puntoEntrega!.y == index % 5 + 1)
+                          Text('B', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.orange)),
+                      ],
                     ),
                   )
                 ),
