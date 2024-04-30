@@ -8,7 +8,7 @@ Esta aplicación ha sido desarrollada para la asignatura de Inteligencia Ambient
 - Poner pedidos en cola
 - Consultar odometría del robot
 
-## Instalación
+## ⚙ Instalación⚙
 La aplicación está disponible para Android e iOS. 
 
 ### Instalación Android
@@ -22,7 +22,9 @@ La aplicación está disponible para Android e iOS.
 
 Una vez instalada, se debe ir a los ajustes y configurar los parámetros para la conexión con el servidor MQTT.
 
-![cap1](assets/captura1.jpg)
+<div style="display: flex; justify-content: space-between;">
+    <img src="assets/image1.png" alt="Pantalla ajustes" width="200"/>
+</div>
 
 Una vez guardados los ajustes, la app estaría lista para ser usada.
 
@@ -38,10 +40,20 @@ Una vez cumplidos los requisitos, se deberá descargar el .zip de este proyecto 
 
 ### Funcionalidades
 - **Lista de pedidos en cola, en curso y finalizados**
-![cap2](assets/captura2.jpg)
+<div style="display: flex; justify-content: space-between;">
+    <img src="assets/image2.png" alt="Pantalla ajustes" width="200"/>
+</div>
 - **Mapa con la posición del robot a tiempo real**
-![cap3](assets/captura3.jpg)
+<div style="display: flex; justify-content: space-between;">
+    <img src="assets/image4.png" alt="Pantalla ajustes" width="200"/>
+    <img src="assets/image5.png" alt="Pantalla ajustes" width="200"/>
+</div>
 - **Mapa para seleccionar el punto de recogida y entrega**
-![cap4](assets/captura4.jpg)
+<div style="display: flex; justify-content: space-between;">
+    <img src="assets/image6.png" alt="Pantalla ajustes" width="200"/>
+</div>
+
 - **Pantalla para comprobar la conexión con el servidor**
-![cap5](assets/captura5.jpg)
+<div style="display: flex; justify-content: space-between;">
+    <img src="assets/image4.png" alt="Pantalla ajustes" width="200"/>
+</div>
