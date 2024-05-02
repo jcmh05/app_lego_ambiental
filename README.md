@@ -15,7 +15,7 @@ La aplicación está desarrollada en Flutter, por lo que podría compilarse para
 ### Instalación Android
 Tan solo hay que **descargar el APK** clickando en la siguiente imagen:
 
-<a href="https://github.com/jcmh05/app_lego_ambiental/raw/main/capturas/applegoambiental.apk">
+<a href="https://github.com/jcmh05/app_lego_ambiental/raw/main/assets/applegoambiental.apk">
     <img src="https://github.com/jcmh05/wordleDSDM/raw/main/capturas/download.png" width="200" alt="Descargar APK">
 </a>
 
