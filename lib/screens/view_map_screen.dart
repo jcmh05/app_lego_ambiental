@@ -34,7 +34,7 @@ class _ViewMapScreenState extends State<ViewMapScreen> {
         setState(() {
           imagePaths = convertStringToList(message);
           LocalStorage().setMapList(imagePaths);
-          mostrarMensaje("Nuevo mapa");
+          //mostrarMensaje("Nuevo mapa");
         });
       } else if (topic == LocalStorage().getOdometryTopic()) {
         LocalStorage().setOdometry(message);
@@ -46,6 +46,12 @@ class _ViewMapScreenState extends State<ViewMapScreen> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _messageSubscription.cancel(); // Cancela la suscripción al stream
+    super.dispose();
   }
 
   @override

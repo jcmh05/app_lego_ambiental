@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 class MqttManager {
   final Log = logger(MqttManager);
 
-
   late MqttServerClient client;
-
   final StreamController<String> _messageController = StreamController<String>.broadcast();
 
   Stream<String> get messageStream => _messageController.stream;
@@ -28,7 +26,7 @@ class MqttManager {
   }
 
   Future<void> connect() async {
-    mostrarMensaje('Conetando...');
+    mostrarMensaje('Conectando...');
     try {
       await client.connect();
     } catch (e) {
@@ -39,30 +37,14 @@ class MqttManager {
     if (client.connectionStatus!.state == MqttConnectionState.connected) {
       Log.i('Connected to MQTT broker');
       mostrarMensaje('Conexión con éxito a ${LocalStorage().getIpAddress()}');
+      _setupMessageListener();  // Configurar el listener aquí
     } else {
       Log.e('Connection failed: ${client.connectionStatus}');
       disconnect();
     }
   }
 
-  void disconnect() {
-    client.disconnect();
-    _onDisconnected();
-  }
-
-  void _onConnected() {
-    Log.i('Connected');
-    client.subscribe(LocalStorage().getMapTopic(), MqttQos.atMostOnce);
-    client.subscribe(LocalStorage().getOdometryTopic(), MqttQos.atMostOnce); // Suscripción al nuevo topic
-  }
-
-  void _onDisconnected() {
-    Log.i('Disconnected');
-  }
-
-  void _onSubscribed(String topic) {
-    Log.i('Subscribed to topic: $topic');
-
+  void _setupMessageListener() {
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
       final String newMessage = MqttPublishPayload.bytesToStringAsString(recMess.payload.message!);
@@ -73,6 +55,26 @@ class MqttManager {
       _messageController.add(topicMessage);
       Log.i('Received message: $topicMessage');
     });
+  }
+
+  void disconnect() {
+    client.disconnect();
+    _onDisconnected();
+  }
+
+  void _onConnected() {
+    Log.i('Connected');
+    client.subscribe(LocalStorage().getMapTopic(), MqttQos.atMostOnce);
+    client.subscribe(LocalStorage().getOdometryTopic(), MqttQos.atMostOnce);
+    client.subscribe(LocalStorage().getCompleteOrderTopic(), MqttQos.atMostOnce);
+  }
+
+  void _onDisconnected() {
+    Log.i('Disconnected');
+  }
+
+  void _onSubscribed(String topic) {
+    Log.i('Subscribed to topic: $topic');
   }
 
   void publishMessage(String topic, String message) {

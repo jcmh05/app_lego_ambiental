@@ -14,8 +14,25 @@ class ViewMqttScreen extends StatefulWidget {
 
 class _ViewMqttScreenState extends State<ViewMqttScreen> {
   MqttManager mqttManager;
+  List<String> messages = ['No messages yet', 'No messages yet', 'No messages yet'];
 
   _ViewMqttScreenState({required this.mqttManager});
+
+  @override
+  void initState() {
+    super.initState();
+    mqttManager.messageStream.listen((message) {
+      setState(() {
+        if (message.startsWith(LocalStorage().getMapTopic())) {
+          messages[0] = message;
+        } else if (message.startsWith(LocalStorage().getOdometryTopic())) {
+          messages[1] = message;
+        } else if (message.startsWith(LocalStorage().getCompleteOrderTopic())) {
+          messages[2] = message;
+        }
+      });
+    });
+  }
 
   void reconnect() async {
     widget.mqttManager.disconnect();
@@ -44,8 +61,13 @@ class _ViewMqttScreenState extends State<ViewMqttScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: Text('MQTT Explorer'),
+      body: ListView.builder(
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(messages[index]),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: reconnect,

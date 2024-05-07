@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:applegoambiental/models/models.dart';
 import 'package:applegoambiental/screens/add_order_screen.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:applegoambiental/components/components.dart';
@@ -16,9 +17,12 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  final Log = logger(_OrderScreenState);
   late StreamSubscription<String> _messageSubscription;
 
   List<String> imagePaths = LocalStorage().getMapList();
+
+  ConfettiController _controller = ConfettiController(duration: Duration(seconds: 5));
 
   @override
   void initState() {
@@ -37,17 +41,68 @@ class _OrderScreenState extends State<OrderScreen> {
         });
       } else if (topic == LocalStorage().getOdometryTopic()) {
         LocalStorage().setOdometry(message);
+      } else if (topic == LocalStorage().getCompleteOrderTopic() ){
+        Log.i('Se recibe el mensaje: $message del topic ${LocalStorage().getCompleteOrderTopic()}');
+        if (message == "true") {
+          if (LocalStorage().getPedidosEnCurso().isNotEmpty) {
+            Pedido completedOrder = LocalStorage().getPedidosEnCurso().first;
+            LocalStorage().removePedidoEnCurso(0);
+            LocalStorage().addPedidoFinalizado(completedOrder);
+            mostrarMensaje('Pedido finalizado');
+            _controller.play();
+            Future.delayed(Duration(seconds: 3), () {
+              _controller.stop();
+            });
+          }
+
+          if (LocalStorage().getPedidosEnEspera().isNotEmpty) {
+            Pedido nextOrder = LocalStorage().getPedidosEnEspera().last;
+            LocalStorage().removePedidoEnEspera(LocalStorage().getPedidosEnEspera().length - 1);
+            LocalStorage().addPedidoEnCurso(nextOrder);
+
+            String message = '${nextOrder.coordenadasRecogida.x}${nextOrder.coordenadasRecogida.y}${nextOrder.coordenadasEntrega.x}${nextOrder.coordenadasEntrega.y}';
+            widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
+          }
+        }else if( message == "false"){
+          if (LocalStorage().getPedidosEnCurso().isNotEmpty) {
+            Pedido completedOrder = LocalStorage().getPedidosEnCurso().first;
+            LocalStorage().removePedidoEnCurso(0);
+          }
+
+          if (LocalStorage().getPedidosEnEspera().isNotEmpty) {
+            Pedido nextOrder = LocalStorage().getPedidosEnEspera().last;
+            LocalStorage().removePedidoEnEspera(LocalStorage().getPedidosEnEspera().length - 1);
+            LocalStorage().addPedidoEnCurso(nextOrder);
+
+            String message = '${nextOrder.coordenadasRecogida.x}${nextOrder.coordenadasRecogida.y}${nextOrder.coordenadasEntrega.x}${nextOrder.coordenadasEntrega.y}';
+            widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
+          }
+        }
       }
     });
   }
 
-  void addPedido(Pedido pedido) {
-    setState(() {
-      LocalStorage().addPedidoEnEspera(pedido);
-    });
+  @override
+  void dispose() {
+    _messageSubscription.cancel(); // Cancela la suscripción al stream
+    super.dispose();
+  }
 
-    String message = '${pedido.coordenadasRecogida.x}${pedido.coordenadasRecogida.y}${pedido.coordenadasEntrega.x}${pedido.coordenadasEntrega.y}';
-    widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
+  void addPedido(Pedido pedido) {
+    if( LocalStorage().getPedidosEnCurso().isEmpty ) {
+      // Si no hay pedidos en curso
+      setState(() {
+        LocalStorage().addPedidoEnCurso(pedido);
+      });
+
+      String message = '${pedido.coordenadasRecogida.x}${pedido.coordenadasRecogida.y}${pedido.coordenadasEntrega.x}${pedido.coordenadasEntrega.y}';
+      widget.mqttManager.publishMessage(LocalStorage().getOrderTopic(), message);
+    } else {
+      // Si hay pedidos en curso se ponen en espera
+      setState(() {
+        LocalStorage().addPedidoEnEspera(pedido);
+      });
+    }
   }
 
   @override
@@ -61,6 +116,19 @@ class _OrderScreenState extends State<OrderScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                ConfettiWidget(
+                  confettiController: _controller,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  emissionFrequency: 0.05,
+                  numberOfParticles: 50,
+                  colors: const [
+                    Colors.green,
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple,
+                  ],
+                ),
                 _buildSection('Pedidos en espera:', LocalStorage().getPedidosEnEspera()),
                 Divider( thickness: 1.0,),
                 _buildSection('Pedidos en curso:', LocalStorage().getPedidosEnCurso()),
