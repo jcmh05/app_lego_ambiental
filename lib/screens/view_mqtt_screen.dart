@@ -40,6 +40,11 @@ class _ViewMqttScreenState extends State<ViewMqttScreen> {
     await mqttManager.connect();
   }
 
+  void publishMap() {
+    String mapData = LocalStorage().getMapList().join();
+    mqttManager.publishMessage(LocalStorage().getMapTopic(), mapData);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

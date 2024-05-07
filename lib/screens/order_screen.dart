@@ -45,14 +45,13 @@ class _OrderScreenState extends State<OrderScreen> {
         Log.i('Se recibe el mensaje: $message del topic ${LocalStorage().getCompleteOrderTopic()}');
         if (message == "true") {
           if (LocalStorage().getPedidosEnCurso().isNotEmpty) {
-            Pedido completedOrder = LocalStorage().getPedidosEnCurso().first;
-            LocalStorage().removePedidoEnCurso(0);
-            LocalStorage().addPedidoFinalizado(completedOrder);
-            mostrarMensaje('Pedido finalizado');
             _controller.play();
-            Future.delayed(Duration(seconds: 3), () {
-              _controller.stop();
+            setState(() {
+              Pedido completedOrder = LocalStorage().getPedidosEnCurso().first;
+              LocalStorage().removePedidoEnCurso(0);
+              LocalStorage().addPedidoFinalizado(completedOrder);
             });
+            mostrarMensaje('Pedido finalizado');
           }
 
           if (LocalStorage().getPedidosEnEspera().isNotEmpty) {
