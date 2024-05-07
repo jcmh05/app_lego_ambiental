@@ -15,7 +15,7 @@ La aplicación está desarrollada en Flutter, por lo que podría compilarse para
 ### Instalación Android
 Tan solo hay que **descargar el APK** clickando en la siguiente imagen:
 
-<a href="https://github.com/jcmh05/app_lego_ambiental/raw/main/capturas/applegoambiental.apk">
+<a href="https://github.com/jcmh05/app_lego_ambiental/raw/master/assets/applegoambiental.apk">
     <img src="https://github.com/jcmh05/wordleDSDM/raw/main/capturas/download.png" width="200" alt="Descargar APK">
 </a>
 
@@ -45,7 +45,7 @@ Una vez cumplidos los requisitos, se deberá descargar el .zip de este proyecto 
   En esta pantalla se visualizarán todos los pedidos que se hayan registrado en la aplicación, clasificándolos entre pedidos en cola, en curso y finalizados. Permitiendo eliminar cada uno de ellos y añadir nuevos pedidos con el botón de la parte inferior.
 
 <div style="display: flex; justify-content: space-between;">  
-    <img src="assets/image1.png" alt="Pantalla ajustes" width="200"/>  
+    <img src="assets/image2.png" alt="Pantalla ajustes" width="200"/>  
 </div>  
 
 
